@@ -54,7 +54,7 @@ function init() {
     packageJson.scripts = packageJson.scripts || {};
     packageJson.scripts["start"] = "node lib/index.js";
     packageJson.scripts["build"] = "tsc -p .";
-    packageJson.scripts["generate-k8s"] = "GENERATE_K8S=1 node lib/index.js";
+    packageJson.scripts["generate-k8s"] = "npm run build && GENERATE_K8S=1 node lib/index.js";
     fs.writeFileSync(path.join(targetDirectory, 'package.json'), JSON.stringify(packageJson, null, 2));
 
 }

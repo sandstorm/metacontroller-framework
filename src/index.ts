@@ -1,4 +1,6 @@
 import * as k8s from '@kubernetes/client-node';
+import * as path from 'path';
+import * as fs from 'fs';
 import express from 'express';
 import { generateUriPathForKey } from './util';
 import { SyncHookRequest, SyncHookResponse } from './types/metacontroller';
@@ -38,8 +40,25 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
             return app;
         },
 
-        generateKubernetesResources(baseDirectory) {
+        generateKubernetesResources(targetDirectory) {
+            if (!fs.existsSync(targetDirectory)) {
+                fs.mkdirSync(targetDirectory, {recursive: true});
+            }
+            let template = fs.readFileSync(path.resolve(__dirname, '../deployment/_metacontroller-framework.yaml'), 'utf-8');
+            template = template.replace('CONTAINER_IMAGE_PLACEHOLDER', args.metacontrollerFrameworkDockerImage);
+            fs.writeFileSync(path.resolve(targetDirectory, '_metacontroller-framework.yaml'), template);
 
+            args.operators.forEach(operatorDefinition => {
+                let template = fs.readFileSync(path.resolve(process.cwd() + '/src/operator/' + operatorDefinition.key + '/crd.yaml'), 'utf-8');
+                template = template.replace('SYNC_WEBHOOK_URL', 'http://metacontroller-framework/' + generateUriPathForKey(operatorDefinition.key) + '/sync');
+                fs.writeFileSync(path.resolve(targetDirectory, generateUriPathForKey(operatorDefinition.key) + '.yaml'), template);
+            });
+
+            console.log(`cd ${targetDirectory}`);
+            console.log('export METACONTROLLER_NAMESPACE=metacontroller');
+            console.log('kubectl -n $METACONTROLLER_NAMESPACE apply -f .');
+            console.log('# to trigger a redeploy, run:');
+            console.log('kubectl -n $METACONTROLLER_NAMESPACE label --overwrite deployment metacontroller-framework deployment-version=$(time)')
         }
     }
 }
