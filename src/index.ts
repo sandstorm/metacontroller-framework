@@ -58,7 +58,7 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
             console.log('export METACONTROLLER_NAMESPACE=metacontroller');
             console.log('kubectl -n $METACONTROLLER_NAMESPACE apply -f .');
             console.log('# to trigger a redeploy, run:');
-            console.log('kubectl -n $METACONTROLLER_NAMESPACE annotate --overwrite deployment metacontroller-framework deployment-timestamp=$(date +%s)')
+            console.log(`kubectl -n $METACONTROLLER_NAMESPACE patch deployment metacontroller-framework -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment-date\":\"$(date +'%s')\"}}}}}"`)
         }
     }
 }
