@@ -6,11 +6,11 @@ A framework for writing Kubernetes Operators easily with TypeScript; based on [m
 
 I have been unhappy with the way how we deployed applications to clusters, until now using Helm. We have encountered the problems stated in [this blog post](https://medium.com/virtuslab/think-twice-before-using-helm-25fbb18bc822); and while [helm 3](https://sweetcode.io/a-first-look-at-the-helm-3-plan/) might be promising, it is totally unclear when it will be released. The problems I see specifically with Helm for us:
 
-    - People who have Helm access effectively need full-cluster admin access. Only alternative is to run one helm/tiller per namespace; which is a lot of overhead too.
-    - When changing Helm charts, you need to manually redeploy every user of the chart - which is a lot of work; and makes it hard to run a cluster in a stable way over time, because you might forget that a certain Helm chart change has had consequences for already-existing deployments.
-    - the open source Helm charts consist of lots and lots of components with many options in values.yaml; with almost
-      no validation going on.
-    - there is no way to integrate with external services, e.g. credentials for already-hosted databases (outside Kubernetes).
+- People who have Helm access effectively need full-cluster admin access. Only alternative is to run one helm/tiller per namespace; which is a lot of overhead too.
+- When changing Helm charts, you need to manually redeploy every user of the chart - which is a lot of work; and makes it hard to run a cluster in a stable way over time, because you might forget that a certain Helm chart change has had consequences for already-existing deployments.
+- the open source Helm charts consist of lots and lots of components with many options in values.yaml; with almost
+    no validation going on.
+- there is no way to integrate with external services, e.g. credentials for already-hosted databases (outside Kubernetes).
 
 Instead, we are trying to embrace *Custom Operators (e.g. CRDs and Controllers)*, as this fully leverages the Kubernetes API model. [This blog post](https://admiralty.io/blog/kubernetes-custom-resource-controller-and-operator-development-tools/) gives a good overview. Using [Metacontroller](http://metacontroller.app/) seems to be quite boilerplate-free; so we are embracing this here. Furthermore, I really like the way you can write type-safe Kubernetes Manifests in TypeScript in [Pulumi](https://pulumi.io/); so we are trying to replicate this approach here.
 
