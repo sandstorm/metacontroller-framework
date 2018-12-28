@@ -58,7 +58,7 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
             console.log('export METACONTROLLER_NAMESPACE=metacontroller');
             console.log('kubectl -n $METACONTROLLER_NAMESPACE apply -f .');
             console.log('# to trigger a redeploy, run:');
-            console.log('kubectl -n $METACONTROLLER_NAMESPACE label --overwrite deployment metacontroller-framework deployment-version=$(time)')
+            console.log('kubectl -n $METACONTROLLER_NAMESPACE annotate --overwrite deployment metacontroller-framework deployment-timestamp=$(date +%s)')
         }
     }
 }
