@@ -5,24 +5,43 @@ import { SyncHookRequest, SyncHookResponse } from './types/metacontroller';
 import { KubernetesObjectWithOptionalSpec } from './types/kubernetes';
 import { OperatorDefinition } from './types/api';
 
+interface MetacontrollerServiceArgs {
+    metacontrollerFrameworkDockerImage: string,
+    operators: OperatorDefinition[]
+}
 
-function metacontrollerService(serviceDefinitions: OperatorDefinition[]) {
-    const app = express();
-    app.use(express.json());
-    serviceDefinitions.forEach(serviceDefinition => {
-        app.post(`/${generateUriPathForKey(serviceDefinition.key)}/sync`, (req, res) => {
-            const request: SyncHookRequest<any> = req.body;
-            serviceDefinition.sync(request).then(response =>
-                res.send(response)
-                , (err) => {
-                    console.log("ERROR");
-                    console.log(err);
-                    res.send(500);
-                }
-            );
-        });
-    })
-    return app;
+interface MetacontrollerService {
+    generateKubernetesResources: (basePath: string) => void
+    listen: (port: number) => void
+}
+
+
+function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerService {
+    return {
+        listen(port) {
+            const app = express();
+            app.use(express.json());
+            args.operators.forEach(operatorDefinition => {
+                app.post(`/${generateUriPathForKey(operatorDefinition.key)}/sync`, (req, res) => {
+                    const request: SyncHookRequest<any> = req.body;
+                    operatorDefinition.sync(request).then(response =>
+                        res.send(response)
+                        , (err) => {
+                            console.log("ERROR");
+                            console.log(err);
+                            res.send(500);
+                        }
+                    );
+                });
+            });
+            app.listen(port);
+            return app;
+        },
+
+        generateKubernetesResources(baseDirectory) {
+
+        }
+    }
 }
 
 export default metacontrollerService;
