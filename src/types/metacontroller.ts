@@ -1,4 +1,6 @@
 import {KubernetesObject} from './kubernetes';
+import { V1Pod, V1PodSpec, V1DeploymentSpec, V1ServiceSpec } from '@kubernetes/client-node';
+import { RecursivePartial } from './util';
 /**
  * The full Sync Hook Request; with the parent spec as type
  */
@@ -16,9 +18,22 @@ export interface SyncHookRequest<PSpec> {
     /**
      * An associative array of child objects that already exist.
      */
-    children: KubernetesObject<any>[];
+    children: RecursivePartial<SyncHookRequestChildren>;
 
     finalizing: boolean;
+}
+
+interface SyncHookRequestChildren {
+    "Pod.v1": SyncHookRequestChildrenList<V1PodSpec>;
+    "Deployment.v1": SyncHookRequestChildrenList<V1DeploymentSpec>;
+    "Service.v1": SyncHookRequestChildrenList<V1ServiceSpec>;
+
+    // other types we do not know yet
+    [key: string]: SyncHookRequestChildrenList<any>
+}
+
+interface SyncHookRequestChildrenList<SpecType> {
+    [resourceName: string]: KubernetesObject<SpecType>
 }
 
 export interface SyncHookResponse {

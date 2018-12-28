@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import express from 'express';
 import { generateUriPathForKey } from './util';
 import { SyncHookRequest, SyncHookResponse } from './types/metacontroller';
-import { KubernetesObjectWithOptionalSpec } from './types/kubernetes';
+import { KubernetesObjectWithOptionalSpec, KubernetesObject } from './types/kubernetes';
 import { OperatorDefinition } from './types/api';
 
 interface MetacontrollerServiceArgs {
@@ -64,4 +64,4 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
 }
 
 export default metacontrollerService;
-export { OperatorDefinition, k8s, SyncHookRequest, SyncHookResponse, KubernetesObjectWithOptionalSpec };
+export { OperatorDefinition, k8s, SyncHookRequest, SyncHookResponse, KubernetesObjectWithOptionalSpec, KubernetesObject };
