@@ -1,14 +1,40 @@
-image: docker:latest
+#####################################################
+# You do not need to modify this file normally.
+#####################################################
+stages:
+  - build
+  - deploy
 
+#####################################################
+# 1) build the image
+#####################################################
 build_image:
+  stage: build
+  image: docker:latest
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN docker-hub.sandstorm.de
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
-
   only:
     - master
 
-  tags:
-    - docker
-    - privileged
+#####################################################
+# 2) update the metacontroller-framework deployment pods
+#####################################################
+deploy:
+  stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl:v1.13.1
+    entrypoint: [""]
+  only:
+    - master
+  environment:
+    name: production
+  script:
+    # DEBUG POINT:
+    # in case the kubectl command fails, you can comment-in the next line to debug all environment variables. In case
+    # the KUBECONFIG environment is missing, see the GitLab docs at https://docs.gitlab.com/ee/user/project/clusters/#troubleshooting-missing-kubeconfig-or-kube_token
+    #- export
+
+    # Force a redeploy
+    - kubectl patch deployment metacontroller-framework -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment-date\":\"$(date +'%s')\"}}}}}"
