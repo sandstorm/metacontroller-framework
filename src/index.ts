@@ -24,7 +24,9 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
             const app = express();
             app.use(express.json());
             args.operators.forEach(operatorDefinition => {
-                app.post(`/${generateUriPathForKey(operatorDefinition.key)}/sync`, (req, res) => {
+                const uriPath = `/${generateUriPathForKey(operatorDefinition.key)}/sync`;
+                console.log(`Registering URI path ${uriPath}`);
+                app.post(uriPath, (req, res) => {
                     const request: SyncHookRequest<any> = req.body;
                     operatorDefinition.sync(request).then(response =>
                         res.send(response)
