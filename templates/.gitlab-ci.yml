@@ -1,0 +1,14 @@
+image: docker:latest
+
+build_image:
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN docker-hub.sandstorm.de
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+  only:
+    - master
+
+  tags:
+    - docker
+    - privileged

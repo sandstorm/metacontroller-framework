@@ -1,0 +1,24 @@
+{
+  "name": "metacontroller-framework",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "dependencies": {
+    "@kubernetes/client-node": "^0.7.2",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.12.18",
+    "@types/request": "^2.48.1",
+    "@types/ws": "^6.0.1",
+    "typescript": "^3.2.2"
+  },
+  "types": "lib/index.d.ts",
+  "bin": {
+    "metacontroller-framework": "./lib/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p ."
+  }
+}
