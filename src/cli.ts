@@ -48,13 +48,27 @@ function init() {
         cwd: targetDirectory
     });
 
+    console.log("Installing npm-run-all into project");
+    execSync("npm install --save-dev npm-run-all@4.1.5", {
+        cwd: targetDirectory
+    });
+
+    console.log("Installing nodemon into project");
+    execSync("npm install --save-dev nodemon@1.18.9", {
+        cwd: targetDirectory
+    });
+
     console.log("Installing scripts into project");
     const packageJsonString = fs.readFileSync(path.join(targetDirectory, 'package.json'), 'utf-8');
     const packageJson = JSON.parse(packageJsonString);
     packageJson.scripts = packageJson.scripts || {};
     packageJson.scripts["start"] = "node lib/index.js";
     packageJson.scripts["build"] = "tsc -p .";
+    packageJson.scripts["build:watch"] = "tsc -p . --watch";
     packageJson.scripts["generate-k8s"] = "npm run build && GENERATE_K8S=1 node lib/index.js";
+    packageJson.scripts["validate-k8s:watch"] = "GENERATE_K8S=1 VALIDATE_K8S=1 nodemon lib/index.js";
+    packageJson.scripts["watch"] = "npm-run-all --parallel build:watch validate-k8s:watch";
+
     fs.writeFileSync(path.join(targetDirectory, 'package.json'), JSON.stringify(packageJson, null, 2));
 
 }
