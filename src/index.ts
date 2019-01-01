@@ -159,3 +159,6 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
 
 export default metacontrollerService;
 export { OperatorDefinition, k8s, SyncHookRequest, SyncHookResponse, KubernetesObjectWithOptionalSpec, KubernetesObject };
+
+export * from './controllerApi/mainControllerApi';
+export * from './controllerApi/creators/index';

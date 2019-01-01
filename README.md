@@ -12,7 +12,13 @@ I have been unhappy with the way how we deployed applications to clusters, until
     no validation going on.
 - there is no way to integrate with external services, e.g. credentials for already-hosted databases (outside Kubernetes).
 
-Instead, we are trying to embrace *Custom Operators (e.g. CRDs and Controllers)*, as this fully leverages the Kubernetes API model. [This blog post](https://admiralty.io/blog/kubernetes-custom-resource-controller-and-operator-development-tools/) gives a good overview. Using [Metacontroller](http://metacontroller.app/) seems to be quite boilerplate-free; so we are embracing this here. Furthermore, I really like the way you can write type-safe Kubernetes Manifests in TypeScript in [Pulumi](https://pulumi.io/); so we are trying to replicate this approach here.
+Instead, we are trying to embrace *Custom Operators (e.g. CRDs and Controllers)*, as this fully leverages the Kubernetes API model. [This blog post](https://admiralty.io/blog/kubernetes-custom-resource-controller-and-operator-development-tools/) gives a good overview. Using [Metacontroller](http://metacontroller.app/) seems to be quite boilerplate-free; so we are embracing this here. Furthermore, I really like the way you can write type-safe Kubernetes Manifests in TypeScript in [Pulumi](https://pulumi.io/); so we are trying to replicate this approach here.  The benefits we expect are:
+
+- direct integration in the Kubernetes RBAC access control system (i.e. no root/sudo)
+- when modifying an operator, one can be sure that *all* instances of the CRD get properly updated in little time.
+- operators can have side-effects like creating databases in an external MySQL; and provide the credentials in the cluster
+- the users do not need to learn the Helm Quirks and Tricks, but can use programming helpers instead
+- TypeScript provides a way to write Kubernetes manifests with Autocompletion
 
 ## Concept
 
