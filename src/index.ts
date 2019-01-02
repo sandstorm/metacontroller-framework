@@ -26,7 +26,7 @@ function operatorBasePath(operatorDefinition: OperatorDefinition): string {
     if (operatorDefinition.key.indexOf('/') !== -1) {
         const [packageKey, operatorName] = operatorDefinition.key.split('/');
         // the key contains a slash, so we have a sub package.
-        return path.resolve(process.cwd(), 'node_modules', packageKey, 'src/operator', operatorDefinition.key) + '/';
+        return path.resolve(process.cwd(), 'node_modules', packageKey, 'src/operator', operatorName) + '/';
     } else {
         return path.resolve(process.cwd(), 'src/operator', operatorDefinition.key) + '/';
     }
