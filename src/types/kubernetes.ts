@@ -1,4 +1,4 @@
-import {RecursivePartial} from './util';
+import { RecursivePartial } from './util';
 
 /**
  * Definition for the most important fields of the "Meta" block of a kubernetes object
@@ -29,7 +29,7 @@ interface KubernetesMeta {
 /**
  * Base Type for Kuberntes Objects: You should use either KubernetesObjectWithOptionalSpec or KubernetesObject
  */
-interface KubernetesBaseObject {
+export interface KubernetesObject {
     /**
     * APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources
     */
@@ -44,10 +44,10 @@ interface KubernetesBaseObject {
     'metadata': KubernetesMeta;
 }
 
-export interface KubernetesObjectWithOptionalSpec<S> extends KubernetesBaseObject {
+export interface KubernetesObjectWithOptionalSpec<S> extends KubernetesObject {
     spec: RecursivePartial<S>;
 }
 
-export interface KubernetesObject<S> extends KubernetesBaseObject {
+export interface KubernetesObjectWithSpec<S> extends KubernetesObject {
     spec: S;
 }

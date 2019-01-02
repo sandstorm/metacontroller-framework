@@ -4,11 +4,12 @@ import * as fs from 'fs';
 import express from 'express';
 import { generateUriPathForKey } from './util';
 import { SyncHookRequest, SyncHookResponse } from './types/metacontroller';
-import { KubernetesObjectWithOptionalSpec, KubernetesObject } from './types/kubernetes';
+import { KubernetesObjectWithOptionalSpec, KubernetesObjectWithSpec } from './types/kubernetes';
 import { OperatorDefinition } from './types/api';
 import { execSync } from 'child_process';
 import YAML from 'yaml';
 import tmp from 'tmp';
+import * as operators from './operator';
 
 interface MetacontrollerServiceArgs {
     metacontrollerFrameworkDockerImage: string,
@@ -21,16 +22,34 @@ interface MetacontrollerService {
     validateKubernetesResources: (singleOperatorName: (string|boolean)) => void
 }
 
+function operatorBasePath(operatorDefinition: OperatorDefinition): string {
+    if (operatorDefinition.key.indexOf('/') !== -1) {
+        const [packageKey, operatorName] = operatorDefinition.key.split('/');
+        // the key contains a slash, so we have a sub package.
+        return path.resolve(require.resolve(packageKey, {paths: [process.cwd()]}), 'src/operator', operatorDefinition.key) + '/';
+    } else {
+        return path.resolve(process.cwd(), 'src/operator', operatorDefinition.key) + '/';
+    }
+}
+
 function loadCustomResourceDefinition(operatorDefinition: OperatorDefinition): string {
-    return fs.readFileSync(path.resolve(process.cwd() + '/src/operator/' + operatorDefinition.key + '/crd.yaml'), 'utf-8');
+    return fs.readFileSync(operatorBasePath(operatorDefinition) + 'crd.yaml', 'utf-8');
 }
 
 function loadExample(operatorDefinition: OperatorDefinition): string {
-    return fs.readFileSync(path.resolve(process.cwd() + '/src/operator/' + operatorDefinition.key + '/example.yaml'), 'utf-8');
+    return fs.readFileSync(operatorBasePath(operatorDefinition) + 'example.yaml', 'utf-8');
+}
+
+function loadExtraDefinitions(operatorDefinition: OperatorDefinition): string | null {
+    const fileName = operatorBasePath(operatorDefinition) + 'extra.yaml';
+    if (fs.existsSync(fileName)) {
+        return fs.readFileSync(fileName, 'utf-8');
+    }
+    return null;
 }
 
 function loadControllerDefinition(operatorDefinition: OperatorDefinition): string {
-    const template = fs.readFileSync(path.resolve(process.cwd() + '/src/operator/' + operatorDefinition.key + '/controller.yaml'), 'utf-8');
+    const template = fs.readFileSync(operatorBasePath(operatorDefinition) + 'controller.yaml', 'utf-8');
     return template.replace('SYNC_WEBHOOK_URL', 'http://metacontroller-framework/' + generateUriPathForKey(operatorDefinition.key) + '/sync');
 }
 
@@ -73,6 +92,11 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
 
                 const controller = loadControllerDefinition(operatorDefinition);
                 fs.writeFileSync(path.resolve(targetDirectory, generateUriPathForKey(operatorDefinition.key) + '_controller.yaml'), controller);
+
+                const extraDefinitions = loadExtraDefinitions(operatorDefinition);
+                if (extraDefinitions) {
+                    fs.writeFileSync(path.resolve(targetDirectory, generateUriPathForKey(operatorDefinition.key) + '_extra.yaml'), extraDefinitions);
+                }
             });
 
             console.log(`cd ${targetDirectory}`);
@@ -158,7 +182,7 @@ function metacontrollerService(args: MetacontrollerServiceArgs): MetacontrollerS
 }
 
 export default metacontrollerService;
-export { OperatorDefinition, k8s, SyncHookRequest, SyncHookResponse, KubernetesObjectWithOptionalSpec, KubernetesObject };
+export { operators, OperatorDefinition, k8s, SyncHookRequest, SyncHookResponse, KubernetesObjectWithOptionalSpec, KubernetesObjectWithSpec };
 
 export * from './controllerApi/mainControllerApi';
 export * from './controllerApi/creators/index';

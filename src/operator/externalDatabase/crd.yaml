@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: externaldatabases.alpha.sandstorm.de
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: alpha.sandstorm.de
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      # One and only one version must be marked as the storage version.
+      storage: true
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: externaldatabases
+    # singular name to be used as an alias on the CLI and for display
+    singular: externaldatabase
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: ExternalDatabase
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - database
+    - db
+  validation:
+    # openAPIV3Schema is the schema for validating custom objects.
+    openAPIV3Schema:
+      properties:
+        spec:
+          required:
+            - databaseHost
+          properties:
+            databaseHost:
+              type: string
+              description: "Name of the database host; which is a 'ExternalDatabaseHost' CRD *inside the Metacontroller* namespace!"
+              example: "mariadb1"

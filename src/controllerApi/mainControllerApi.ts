@@ -1,5 +1,5 @@
 import { SyncHookRequest, SyncHookResponse } from "../types/metacontroller";
-import { KubernetesObject } from "../types/kubernetes";
+import { KubernetesObjectWithSpec, KubernetesObject } from "../types/kubernetes";
 
 interface ControllerStatus {
     aggregated: ("OK" | "not OK"),
@@ -8,7 +8,7 @@ interface ControllerStatus {
     };
 }
 
-export function determineStatus(request: SyncHookRequest<any>, expectedChildren: KubernetesObject<any>[]): ControllerStatus {
+export function determineStatus(request: SyncHookRequest<any>, expectedChildren: KubernetesObject[]): ControllerStatus {
     const status: ControllerStatus = {
         aggregated: 'OK',
         children: {}
@@ -27,7 +27,7 @@ export function determineStatus(request: SyncHookRequest<any>, expectedChildren:
     return status;
 }
 
-export function responseWithAutoStatus(children: KubernetesObject<any>[], request: SyncHookRequest<any>): Promise<SyncHookResponse> {
+export function responseWithAutoStatus(children: KubernetesObject[], request: SyncHookRequest<any>): Promise<SyncHookResponse> {
     const syncHookResponse: SyncHookResponse = {
         status: determineStatus(request, children),
         children

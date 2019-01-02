@@ -1,0 +1,19 @@
+apiVersion: "alpha.sandstorm.de/v1"
+kind: WebApp
+metadata:
+  name: my-webapp
+  labels:
+    app: my-webapp
+spec:
+  image:
+    name: nginx
+---
+apiVersion: "alpha.sandstorm.de/v1"
+kind: WebApp
+metadata:
+  name: my-webapp
+  labels:
+    app: my-webapp
+spec:
+  image:
+    name: nginx

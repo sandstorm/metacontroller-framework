@@ -1,0 +1,26 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: webapp-controller
+spec:
+  generateSelector: true
+  parentResource:
+    apiVersion: alpha.sandstorm.de/v1
+    resource: webapps
+  childResources:
+  - apiVersion: apps/v1
+    resource: deployments
+    updateStrategy:
+      method: Recreate
+  - apiVersion: extensions/v1beta1
+    resource: ingresses
+    updateStrategy:
+      method: Recreate
+  - apiVersion: v1
+    resource: services
+    updateStrategy:
+      method: Recreate
+  hooks:
+    sync:
+      webhook:
+        url: SYNC_WEBHOOK_URL
