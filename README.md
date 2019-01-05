@@ -39,7 +39,9 @@ The `metacontroller-framework` package is responsible for the following:
 
 ## Getting Started
 
-This section will explain how you can get started:
+This Getting Started guide is a little opinionated
+
+This section will explain how you can get started with GitLab CI:
 
 1. Create a new project package, add the dependency to `metacontroller-framework` and run the init script
 
