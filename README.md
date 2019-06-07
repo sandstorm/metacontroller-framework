@@ -93,7 +93,7 @@ This section will explain how you can get started with GitLab CI:
 
     1. We expect that *metacontroller* and the *metacontroller-framework* are deployed *in the same namespace* of your Kubernetes cluster. By default, it is "metacontroller"; but you can change this.
 
-    2. Install Metacontroller into your cluster (as stated in their docs)[https://metacontroller.app/guide/install/#install-metacontroller]. If you want to install it to a different namespace than `metacontroller`, you need to adjust the YAML files before applying them.
+    2. Install Metacontroller into your cluster [as stated in their docs](https://metacontroller.app/guide/install/#install-metacontroller). If you want to install it to a different namespace than `metacontroller`, you need to adjust the YAML files before applying them.
 
     3. Use the included `Dockerfile` and `.gitlab-ci.yml`, which:
 
