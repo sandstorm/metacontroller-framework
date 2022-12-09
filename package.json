@@ -5,7 +5,7 @@
     "main": "lib/index.js",
     "dependencies": {
         "@kubernetes/client-node": "^0.7.2",
-        "express": "^4.16.4",
+        "express": "^4.17.3",
         "tmp": "0.0.33",
         "yaml": "^1.1.0",
         "@types/mysql": "^2.15.5",
